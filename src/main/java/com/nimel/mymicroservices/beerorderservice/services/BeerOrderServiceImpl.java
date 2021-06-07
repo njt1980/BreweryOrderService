@@ -8,9 +8,12 @@ import javax.management.RuntimeErrorException;
 import javax.sound.sampled.Line;
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import com.nimel.mymicroservices.beerorderservice.dto.BeerOrderDto;
 import com.nimel.mymicroservices.beerorderservice.dto.BeerOrderPagedList;
@@ -24,11 +27,23 @@ import com.nimel.mymicroservices.beerorderservice.respository.CustomerRepository
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Service
 public class BeerOrderServiceImpl implements BeerOrderService {
 	
-	private CustomerRepository customerRepository;
-	private BeerOrderRepository beerOrderRepository;
-	private BeerOrderMapper beerOrderMapper;
+	private final BeerOrderRepository beerOrderRepository;
+    private final CustomerRepository customerRepository;
+    private final BeerOrderMapper beerOrderMapper;
+    private final ApplicationEventPublisher publisher;
+
+    public BeerOrderServiceImpl(BeerOrderRepository beerOrderRepository,
+                                CustomerRepository customerRepository,
+                                BeerOrderMapper beerOrderMapper, ApplicationEventPublisher publisher) {
+        this.beerOrderRepository = beerOrderRepository;
+        this.customerRepository = customerRepository;
+        this.beerOrderMapper = beerOrderMapper;
+        this.publisher = publisher;
+    }
+
 
 	@Override
 	public BeerOrderPagedList listOrders(UUID customerId, Pageable pageable) {

@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
+import org.springframework.stereotype.Component;
+@Component
 public class DateMapper {
 	
 	public OffsetDateTime asOffsetDateTime(Timestamp ts){
