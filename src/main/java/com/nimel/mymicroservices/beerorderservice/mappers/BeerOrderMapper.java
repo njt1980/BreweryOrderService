@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import com.nimel.mymicroservices.beerorderservice.dto.BeerOrderDto;
 import com.nimel.mymicroservices.beerorderservice.entity.BeerOrder;
 
-@Component
+//@Component
 @Mapper(uses= {DateMapper.class,BeerOrderLineMapper.class})
 public interface BeerOrderMapper {
 	
