@@ -63,14 +63,20 @@ public class TastingRoomService {
 
         List<BeerOrderLineDto> beerOrderLineSet = new ArrayList<>();
         beerOrderLineSet.add(beerOrderLine);
+        
+        System.out.println(beerOrderLine);
+        System.out.println(beerOrderLineSet);
+        
 
         BeerOrderDto beerOrder = BeerOrderDto.builder()
                 .customerId(customer.getId())
                 .customerRef(UUID.randomUUID().toString())
                 .beerOrderLines(beerOrderLineSet)
                 .build();
-
+        
+        System.out.println(beerOrder);
         BeerOrderDto savedOrder = beerOrderService.placeOrder(customer.getId(), beerOrder);
+        System.out.println(savedOrder);
 
     }
 

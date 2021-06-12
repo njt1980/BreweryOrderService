@@ -23,6 +23,7 @@ public class BeerOrderLine extends BaseEntity{
 	@ManyToOne
 	private BeerOrder beerOrder;
 	private UUID beerId;
+	private String upc;
 	private int orderQuantity = 0;
 	private int quantityAllocated = 0;
 

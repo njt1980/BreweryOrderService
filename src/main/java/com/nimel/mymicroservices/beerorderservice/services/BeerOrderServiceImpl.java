@@ -54,7 +54,7 @@ public class BeerOrderServiceImpl implements BeerOrderService {
 			Page<BeerOrder> page = beerOrderRepository.findAllByCustomer(customerOptional.get(), pageable);
 			return new BeerOrderPagedList(page
 					.stream()
-					.map(beerOrderMapper::toBeerOrderDto)
+					.map(beerOrderMapper::toBeerOrderDtoWithDetails)
 					.collect(Collectors.toList())
 					,PageRequest.of(page.getPageable().getPageNumber(),page.getPageable().getPageSize())
 					,page.getTotalElements());

@@ -2,6 +2,7 @@ package com.nimel.mymicroservices.beerorderservice.controllers;
 
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +31,7 @@ public class BeerOrderController {
 	private static final Integer DEFAULT_PAGE_NUMBER=0;
 	private static final Integer DEFAULT_PAGE_SIZE=25;
 	
+	@Autowired
 	private BeerOrderService beerOrderService;
 	
 	@GetMapping("orders")
@@ -41,9 +43,12 @@ public class BeerOrderController {
 			pageNumber=DEFAULT_PAGE_NUMBER;
 		}
 		if(pageSize== null || pageSize<0) {
-			pageNumber=DEFAULT_PAGE_SIZE;
+			pageSize=DEFAULT_PAGE_SIZE;
 		}
-		
+		System.out.println(customerId);
+		System.out.println(pageNumber);
+		System.out.println(pageSize);
+		System.out.println(beerOrderService);
 		return beerOrderService.listOrders(customerId, PageRequest.of(pageNumber, pageSize));
 	}
 	
