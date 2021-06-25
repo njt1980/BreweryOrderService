@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
 
-import com.nimel.mymicroservices.beerorderservice.dto.BeerOrderDto;
-import com.nimel.mymicroservices.beerorderservice.dto.BeerOrderPagedList;
+import com.nimel.mymicroservices.common.dtos.BeerOrderDto;
+import com.nimel.mymicroservices.common.dtos.BeerOrderPagedList;
 
 public interface BeerOrderService {
 	

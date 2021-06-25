@@ -15,8 +15,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.nimel.mymicroservices.beerorderservice.dto.BeerOrderDto;
-import com.nimel.mymicroservices.beerorderservice.dto.BeerOrderPagedList;
+import com.nimel.mymicroservices.common.dtos.BeerOrderDto;
+import com.nimel.mymicroservices.common.dtos.BeerOrderPagedList;
 import com.nimel.mymicroservices.beerorderservice.entity.BeerOrder;
 import com.nimel.mymicroservices.beerorderservice.entity.Customer;
 import com.nimel.mymicroservices.beerorderservice.entity.OrderStatusEnum;

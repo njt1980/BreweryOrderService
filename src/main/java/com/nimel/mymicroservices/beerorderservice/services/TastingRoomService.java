@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nimel.mymicroservices.beerorderservice.bootstrap.BeerOrderBootStrap;
-import com.nimel.mymicroservices.beerorderservice.dto.BeerOrderDto;
-import com.nimel.mymicroservices.beerorderservice.dto.BeerOrderLineDto;
+import com.nimel.mymicroservices.common.dtos.BeerOrderDto;
+import com.nimel.mymicroservices.common.dtos.BeerOrderLineDto;
 import com.nimel.mymicroservices.beerorderservice.entity.Customer;
 import com.nimel.mymicroservices.beerorderservice.respository.BeerOrderRepository;
 import com.nimel.mymicroservices.beerorderservice.respository.CustomerRepository;

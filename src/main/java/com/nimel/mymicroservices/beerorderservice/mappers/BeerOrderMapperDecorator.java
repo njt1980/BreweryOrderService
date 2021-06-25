@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.nimel.mymicroservices.beerorderservice.dto.BeerDetails;
-import com.nimel.mymicroservices.beerorderservice.dto.BeerOrderDto;
-import com.nimel.mymicroservices.beerorderservice.dto.BeerOrderLineDto;
+import com.nimel.mymicroservices.common.dtos.BeerDetails;
+import com.nimel.mymicroservices.common.dtos.BeerOrderDto;
+import com.nimel.mymicroservices.common.dtos.BeerOrderLineDto;
 import com.nimel.mymicroservices.beerorderservice.entity.BeerOrder;
 import com.nimel.mymicroservices.beerorderservice.entity.BeerOrderLine;
 import com.nimel.mymicroservices.beerorderservice.services.BeerInfoService;

@@ -12,8 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.nimel.mymicroservices.beerorderservice.dto.BeerDetails;
-import com.nimel.mymicroservices.beerorderservice.dto.BeerDto;
+import com.nimel.mymicroservices.common.dtos.BeerDetails;
+import com.nimel.mymicroservices.common.dtos.BeerDto;
 
 @Service
 public class BeerInfoServiceImpl implements BeerInfoService {

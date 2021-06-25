@@ -5,8 +5,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
 
-import com.nimel.mymicroservices.beerorderservice.dto.BeerOrderDto;
-import com.nimel.mymicroservices.beerorderservice.dto.CustomerDto;
+import com.nimel.mymicroservices.common.dtos.BeerOrderDto;
+import com.nimel.mymicroservices.common.dtos.CustomerDto;
 import com.nimel.mymicroservices.beerorderservice.entity.BeerOrder;
 import com.nimel.mymicroservices.beerorderservice.entity.Customer;
 

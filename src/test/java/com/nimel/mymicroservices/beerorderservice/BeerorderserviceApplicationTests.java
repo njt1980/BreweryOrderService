@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.nimel.mymicroservices.beerorderservice.dto.BeerDetails;
+import com.nimel.mymicroservices.common.dtos.BeerDetails;
 import com.nimel.mymicroservices.beerorderservice.services.BeerInfoServiceImpl;
 
 @SpringBootTest
@@ -21,9 +21,7 @@ class BeerorderserviceApplicationTests {
 		System.out.println(beerInfoServiceImpl);
 		BeerDetails beerDetails = beerInfoServiceImpl.beerDetails(upc);
 		System.out.println(beerDetails);
-		
-		
-		
+	
 	}
 
 }

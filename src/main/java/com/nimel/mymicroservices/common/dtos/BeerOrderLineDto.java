@@ -1,4 +1,4 @@
-package com.nimel.mymicroservices.beerorderservice.dto;
+package com.nimel.mymicroservices.common.dtos;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -34,6 +34,7 @@ public class BeerOrderLineDto extends BaseItem {
     private String beerName;
     private UUID beerId;
     private Integer orderQuantity = 0;
+    private Integer quantityAllocated;
 }
 
 //@Getter

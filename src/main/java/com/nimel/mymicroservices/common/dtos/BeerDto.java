@@ -1,4 +1,4 @@
-package com.nimel.mymicroservices.beerorderservice.dto;
+package com.nimel.mymicroservices.common.dtos;
 
 import java.io.Serializable;
 import java.sql.Timestamp;

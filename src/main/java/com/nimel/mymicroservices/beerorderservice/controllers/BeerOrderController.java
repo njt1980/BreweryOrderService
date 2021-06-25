@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nimel.mymicroservices.beerorderservice.dto.BeerOrderLineDto;
-import com.nimel.mymicroservices.beerorderservice.dto.BeerOrderDto;
-import com.nimel.mymicroservices.beerorderservice.dto.BeerOrderPagedList;
+import com.nimel.mymicroservices.common.dtos.BeerOrderLineDto;
+import com.nimel.mymicroservices.common.dtos.BeerOrderDto;
+import com.nimel.mymicroservices.common.dtos.BeerOrderPagedList;
 import com.nimel.mymicroservices.beerorderservice.entity.BeerOrder;
 import com.nimel.mymicroservices.beerorderservice.services.BeerOrderService;
 
