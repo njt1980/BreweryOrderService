@@ -1,11 +1,19 @@
 package com.nimel.mymicroservices.beerorderservice.sm;
 
 import java.util.EnumSet;
+import java.util.Optional;
+import java.util.UUID;
 
 import javax.management.loading.PrivateClassLoader;
 
+import org.apache.activemq.artemis.core.protocol.core.impl.wireformat.SessionSendMessage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.action.Action;
+import org.springframework.statemachine.annotation.OnTransition;
 import org.springframework.statemachine.config.EnableStateMachineFactory;
 import org.springframework.statemachine.config.StateMachineConfigurerAdapter;
 import org.springframework.statemachine.config.builders.StateMachineConfigurationConfigurer;
@@ -15,11 +23,18 @@ import org.springframework.statemachine.config.builders.StateMachineTransitionCo
 import org.springframework.statemachine.listener.StateMachineListenerAdapter;
 import org.springframework.statemachine.state.State;
 
+import com.nimel.mymicroservices.beerorderservice.actions.ValidateOrderActions;
+import com.nimel.mymicroservices.beerorderservice.config.JmsConfig;
+import com.nimel.mymicroservices.beerorderservice.entity.BeerOrder;
 import com.nimel.mymicroservices.beerorderservice.entity.OrderEventEnum;
 import com.nimel.mymicroservices.beerorderservice.entity.OrderStatusEnum;
-import com.nimel.mymicroservices.beerorderservice.events.ValidateOrderRequest;
+import com.nimel.mymicroservices.beerorderservice.mappers.BeerOrderMapper;
+import com.nimel.mymicroservices.beerorderservice.respository.BeerOrderRepository;
+import com.nimel.mymicroservices.beerorderservice.services.BeerOrderManagerImpl;
+import com.nimel.mymicroservices.common.dtos.ValidateOrderRequest;
 
 import io.netty.handler.ssl.JdkApplicationProtocolNegotiator.AllocatorAwareSslEngineWrapperFactory;
+import jdk.internal.org.jline.utils.Log;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -28,16 +43,47 @@ import lombok.extern.slf4j.Slf4j;
 public class StateMachineConfig extends StateMachineConfigurerAdapter<OrderStatusEnum, OrderEventEnum> {
 	
 //	private ValidateOrderRequest validateOrderRequest;
-	private Action<OrderStatusEnum, OrderEventEnum> validateOrderActions;
+	@Autowired
+	private ValidateOrderActions validateOrderActions;
+//	private Action<OrderStatusEnum, OrderEventEnum> validateOrderActions;
 	private Action<OrderStatusEnum, OrderEventEnum> allocateOrderAction;
 	private Action<OrderStatusEnum, OrderEventEnum> deallocateOrderAction;
 	private Action<OrderStatusEnum, OrderEventEnum> validationFailureAction;
 	private Action<OrderStatusEnum, OrderEventEnum> allocationFailureAction;
+	
+	private BeerOrderRepository beerOrderRepository;
+	private BeerOrderMapper beerOrderMapper;
+	private JmsTemplate jmsTemplate;
+	
+	@Bean
+	public Action<OrderStatusEnum, OrderEventEnum> testAction(){
+		
+			return new Action<OrderStatusEnum,OrderEventEnum>(){
+
+				@Override
+				public void execute(StateContext<OrderStatusEnum, OrderEventEnum> context) {
+					String beerOrderId = (String) context.getMessage().getHeaders().get(BeerOrderManagerImpl.ORDER_ID_HEADER);
+					BeerOrder beerOrder = beerOrderRepository.findById(UUID.fromString(beerOrderId)).get();
+					log.debug("From action, after Optional check");
+					System.out.println("Sending message to queue..");
+					jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_QUEUE,ValidateOrderRequest.builder()
+							.beerOrderDto(beerOrderMapper.toBeerOrderDto(beerOrder))
+							.build());
+				}
+					
+			};
+
+			
+	}
+	
 	@Override
 	public void configure(StateMachineStateConfigurer<OrderStatusEnum, OrderEventEnum> states) throws Exception {
+		
 		states.withStates()
 		.initial(OrderStatusEnum.NEW)
-		.states(EnumSet.allOf(OrderStatusEnum.class))
+//		.state(OrderStatusEnum.PENDING_VALIDATION,testAction())
+		.state(OrderStatusEnum.PENDING_VALIDATION,validateOrderActions)
+//		.states(EnumSet.allOf(OrderStatusEnum.class))
 		.end(OrderStatusEnum.PICKED_UP)
 		.end(OrderStatusEnum.VALIDATION_EXCEPTION)
 		.end(OrderStatusEnum.ALLOCATION_ERROR)
@@ -45,13 +91,16 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<OrderStatu
 		.end(OrderStatusEnum.DELIVERY_EXCEPTION)
 		.end(OrderStatusEnum.CANCELLED);
 	}
+	
 
 	@Override
 	public void configure(StateMachineTransitionConfigurer<OrderStatusEnum, OrderEventEnum> transitions)
 			throws Exception {
 		
 		transitions.withExternal().source(OrderStatusEnum.NEW).target(OrderStatusEnum.PENDING_VALIDATION).event(OrderEventEnum.VALIDATE_ORDER)
-		.action(validateOrderActions)
+//		.action(validateOrderActions)
+//		.action(testAction())
+//		.timer(5000)
 		.and()
 		.withExternal().source(OrderStatusEnum.PENDING_VALIDATION).target(OrderStatusEnum.VALIDATED).event(OrderEventEnum.VALIDATION_PASSED)
 		.and()
@@ -79,15 +128,7 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<OrderStatu
 
 	}
 	
-	private Action<OrderStatusEnum, OrderEventEnum> allocateInventory() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	private Action<OrderStatusEnum, OrderEventEnum> validateOrder() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public void configure(StateMachineConfigurationConfigurer<OrderStatusEnum, OrderEventEnum> config) throws Exception {
@@ -100,6 +141,11 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<OrderStatu
 		};
 		config.withConfiguration().listener(adapter);
 	}
+	
+		
+	
+	
+	
 
 	
 	

@@ -13,7 +13,9 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.StateMachineContext;
+//import org.springframework.statemachine.StateMachineEventResult;
 import org.springframework.statemachine.config.StateMachineFactory;
+import org.springframework.statemachine.listener.StateMachineListener;
 import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +23,15 @@ import com.nimel.mymicroservices.beerorderservice.entity.BeerOrder;
 import com.nimel.mymicroservices.beerorderservice.entity.OrderEventEnum;
 import com.nimel.mymicroservices.beerorderservice.entity.OrderStatusEnum;
 import com.nimel.mymicroservices.beerorderservice.respository.BeerOrderRepository;
+import com.nimel.mymicroservices.beerorderservice.sm.ErrorStateMachineListener;
+import com.nimel.mymicroservices.beerorderservice.sm.StateMachineConfig;
 import com.nimel.mymicroservices.common.dtos.BeerOrderDto;
+import com.sun.xml.bind.v2.model.core.Adapter;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+//import reactor.core.publisher.Flux;
+//import reactor.core.publisher.Mono;
 
 @AllArgsConstructor
 @Service
@@ -34,6 +41,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager{
 	public static final String ORDER_ID_HEADER = "ORDER_ID_HEADER";
 	private BeerOrderRepository beerOrderRepository;
 	private BeerOrderStateChangeInterceptor beerOrderStateChangeInterceptor;
+	private ErrorStateMachineListener errorStateMachineListener;
 	
 	private StateMachineFactory<OrderStatusEnum, OrderEventEnum> stateMachineFactory;
 
@@ -46,19 +54,32 @@ public class BeerOrderManagerImpl implements BeerOrderManager{
 		beerOrder.setOrderStatus(OrderStatusEnum.NEW);
 		BeerOrder savedBeerOrder =  beerOrderRepository.saveAndFlush(beerOrder);
 		sendBeerOrderEvent(beerOrder, OrderEventEnum.VALIDATE_ORDER);
+		awaitForStatus(beerOrder.getId(), OrderStatusEnum.PENDING_VALIDATION);
+		
+//		try {
+//			System.out.println("Yawnnn..");
+//			Thread.sleep(10000);
+//			System.out.println("Awake..");
+//		}catch(InterruptedException e){
+//			System.out.println("Inside sleep catch block");
+//		}
 		return savedBeerOrder;
 		
 	}
 	
+	
 	public void processValidateResult(UUID orderId,Boolean isValid) {
 		
 		Optional<BeerOrder> beerOrderOptional =  beerOrderRepository.findById(orderId);
+		System.out.println("Beer Order id from result queue :" + orderId.toString());
+		System.out.println("Valid from result queue :" + isValid);
 //		Optional.ofNullable(null)
 		beerOrderOptional.ifPresentOrElse(beerOrder -> {
 			if(isValid) {
 				sendBeerOrderEvent(beerOrder, OrderEventEnum.VALIDATION_PASSED);
 				awaitForStatus(orderId, OrderStatusEnum.VALIDATED);
                 BeerOrder validatedOrder = beerOrderRepository.findById(orderId).get();
+                System.out.println("ALL SET AND GOING TO SEND ALLOCATE_ORDER EVENT!!");
                 sendBeerOrderEvent(validatedOrder, OrderEventEnum.ALLOCATE_ORDER);
             } else {
                 sendBeerOrderEvent(beerOrder, OrderEventEnum.VALIDATION_FAILED);
@@ -92,9 +113,14 @@ public class BeerOrderManagerImpl implements BeerOrderManager{
 	private void sendBeerOrderEvent(BeerOrder beerOrder,OrderEventEnum orderEventEnum) {
 		
 		StateMachine<OrderStatusEnum,OrderEventEnum> sm = build(beerOrder);
+		
 		Message msg = MessageBuilder.withPayload(orderEventEnum)
 				.setHeader(ORDER_ID_HEADER, beerOrder.getId().toString())
 				.build();
+		
+		
+		sm.addStateListener(errorStateMachineListener);
+		System.out.println("Sending message via sendEvent..");
 		sm.sendEvent(msg);
 		
 	}
@@ -179,9 +205,9 @@ public class BeerOrderManagerImpl implements BeerOrderManager{
 	private StateMachine<OrderStatusEnum, OrderEventEnum> build(BeerOrder beerOrder){
 
 		StateMachine<OrderStatusEnum,OrderEventEnum> sm = stateMachineFactory.getStateMachine(beerOrder.getId());
-		System.out.println("Initial :" + sm.getId());
-		System.out.println("Initial State :" + sm.getState());
-		System.out.println("Got sm");
+//		System.out.println("Initial :" + sm.getId());
+//		System.out.println("Initial State :" + sm.getState());
+//		System.out.println("Got sm");
 		sm.stop();
 		
 		System.out.println("sm stopped");
@@ -192,9 +218,9 @@ public class BeerOrderManagerImpl implements BeerOrderManager{
 				sma.resetStateMachine(new DefaultStateMachineContext<>(beerOrder.getOrderStatus(), null, null, null));
 			});
 		sm.start();
-		System.out.println("sm started");
-		System.out.println("Reset :" + sm.getId());
-		System.out.println("Reset State :" + sm.getState());
+//		System.out.println("sm started");
+//		System.out.println("Reset :" + sm.getId());
+//		System.out.println("Reset State :" + sm.getState());
 		
 		return sm;
 	}

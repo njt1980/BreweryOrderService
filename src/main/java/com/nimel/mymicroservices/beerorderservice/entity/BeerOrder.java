@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -33,6 +35,7 @@ public class BeerOrder extends BaseEntity {
 //	@OneToMany(mappedBy = "beerOrder")
 //    @Fetch(FetchMode.JOIN)
 	private Set<BeerOrderLine> beerOrderLines;
+//	@Enumerated(EnumType.STRING)
 	private OrderStatusEnum orderStatus = OrderStatusEnum.NEW;
 	private String orderStatusCallbackUrl;
 

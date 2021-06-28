@@ -12,7 +12,6 @@ import com.nimel.mymicroservices.beerorderservice.config.JmsConfig;
 import com.nimel.mymicroservices.beerorderservice.entity.BeerOrder;
 import com.nimel.mymicroservices.beerorderservice.entity.OrderEventEnum;
 import com.nimel.mymicroservices.beerorderservice.entity.OrderStatusEnum;
-import com.nimel.mymicroservices.beerorderservice.events.ValidateOrderRequest;
 import com.nimel.mymicroservices.beerorderservice.mappers.BeerOrderMapper;
 import com.nimel.mymicroservices.beerorderservice.respository.BeerOrderRepository;
 import com.nimel.mymicroservices.beerorderservice.services.BeerOrderManagerImpl;

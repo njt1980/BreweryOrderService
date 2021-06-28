@@ -24,26 +24,19 @@ import com.nimel.mymicroservices.beerorderservice.mappers.BeerOrderMapper;
 import com.nimel.mymicroservices.beerorderservice.respository.BeerOrderRepository;
 import com.nimel.mymicroservices.beerorderservice.respository.CustomerRepository;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class BeerOrderServiceImpl implements BeerOrderService {
 	
 	private final BeerOrderRepository beerOrderRepository;
     private final CustomerRepository customerRepository;
     private final BeerOrderMapper beerOrderMapper;
+    private final BeerOrderManager beerOrderManager;
     private final ApplicationEventPublisher publisher;
-
-    public BeerOrderServiceImpl(BeerOrderRepository beerOrderRepository,
-                                CustomerRepository customerRepository,
-                                BeerOrderMapper beerOrderMapper, ApplicationEventPublisher publisher) {
-        this.beerOrderRepository = beerOrderRepository;
-        this.customerRepository = customerRepository;
-        this.beerOrderMapper = beerOrderMapper;
-        this.publisher = publisher;
-    }
-
 
 	@Override
 	public BeerOrderPagedList listOrders(UUID customerId, Pageable pageable) {
@@ -75,7 +68,8 @@ public class BeerOrderServiceImpl implements BeerOrderService {
 			beerOrder.setCustomer(customerOptional.get());
 			beerOrder.setOrderStatus(OrderStatusEnum.NEW);
 			beerOrder.getBeerOrderLines().forEach(line -> line.setBeerOrder(beerOrder));
-			BeerOrder savedBeerOrder=beerOrderRepository.saveAndFlush(beerOrder);
+			BeerOrder savedBeerOrder = beerOrderManager.newBeerOrder(beerOrder);
+//			BeerOrder savedBeerOrder=beerOrderRepository.saveAndFlush(beerOrder);
 			return beerOrderMapper.toBeerOrderDto(savedBeerOrder);
 		}else {
 			throw new RuntimeException("Customer not found");
@@ -90,8 +84,10 @@ public class BeerOrderServiceImpl implements BeerOrderService {
 	
 	@Override
 	public void pickupOrder(UUID customerId, UUID orderId) {
-		BeerOrder beerOrder= getOrder(customerId, orderId);
-		beerOrder.setOrderStatus(OrderStatusEnum.PICKED_UP);
+		
+		beerOrderManager.beerOrderPickedUp(orderId);
+//		BeerOrder beerOrder= getOrder(customerId, orderId);
+//		beerOrder.setOrderStatus(OrderStatusEnum.PICKED_UP);
 	}
 
 	private BeerOrder getOrder(UUID customerId, UUID orderId) {
