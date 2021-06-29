@@ -3,6 +3,9 @@ package com.nimel.mymicroservices.beerorderservice.actions;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.action.Action;
@@ -26,16 +29,20 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AllocateOrderAction implements Action<OrderStatusEnum,OrderEventEnum> {
-
+	@Autowired
 	private BeerOrderRepository beerOrderRepository;
+	@Autowired
 	private BeerOrderMapper beerOrderMapper;
+	@Autowired
 	private JmsTemplate jmsTemplate;
-	
+	@Transactional
 	@Override
 	public void execute(StateContext<OrderStatusEnum, OrderEventEnum> context) {
 		// TODO Auto-generated method stub
+		System.out.println("****TRY SEND ORDER TO ALLOCATE_ORDER_QUEUE");
 		String beerOrderId = (String) context.getMessage().getHeaders().get(BeerOrderManagerImpl.ORDER_ID_HEADER);
 		
+		System.out.println("Beer Order Repository in Allocate Order Action is : " + beerOrderRepository);
 		Optional<BeerOrder> beerOrderOptional = beerOrderRepository.findById(UUID.fromString(beerOrderId));
 		
 		beerOrderOptional.ifPresentOrElse(beerOrder -> {

@@ -42,16 +42,16 @@ public class BeerorderserviceApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		
-		System.out.println("I am here");
-		// TODO Auto-generated method stub
-		Customer testCustomer = customerRepository.save(Customer.builder()
-                .customerName("Test Customer")
-                .build());
-		
-		BeerOrder beerOrder = createBeerOrder(testCustomer);
-		
-		beerOrderManager.newBeerOrder(beerOrder);
-		
+//		System.out.println("I am here");
+//		// TODO Auto-generated method stub
+//		Customer testCustomer = customerRepository.save(Customer.builder()
+//                .customerName("Test Customer")
+//                .build());
+//		
+//		BeerOrder beerOrder = createBeerOrder(testCustomer);
+//		
+//		beerOrderManager.newBeerOrder(beerOrder);
+//		
 		
 		
 		

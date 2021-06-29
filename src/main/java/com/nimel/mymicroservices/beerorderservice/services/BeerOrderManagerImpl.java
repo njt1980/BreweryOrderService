@@ -94,6 +94,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager{
         beerOrderOptional.ifPresentOrElse(beerOrder -> {
             sendBeerOrderEvent(beerOrder, OrderEventEnum.ALLOCATION_SUCCESS);
             awaitForStatus(beerOrder.getId(), OrderStatusEnum.ALLOCATED);
+            System.out.println("BEER ALLOCATED*********");
             updateAllocatedQty(beerOrderDto);
         }, () -> log.error("Order Id Not Found: " + beerOrderDto.getId() ));
     }
@@ -105,6 +106,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager{
         beerOrderOptional.ifPresentOrElse(beerOrder -> {
             sendBeerOrderEvent(beerOrder, OrderEventEnum.ALLOCATION_NO_INVENTORY);
             awaitForStatus(beerOrder.getId(), OrderStatusEnum.PENDING_INVENTORY);
+            System.out.println("NO INVENTORY*********");
             updateAllocatedQty(beerOrderDto);
         }, () -> log.error("Order Id Not Found: " + beerOrderDto.getId() ));
 

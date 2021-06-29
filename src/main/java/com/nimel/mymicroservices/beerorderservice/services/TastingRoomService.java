@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import javax.sound.sampled.Line;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -74,9 +76,16 @@ public class TastingRoomService {
                 .beerOrderLines(beerOrderLineSet)
                 .build();
         
-        System.out.println(beerOrder);
+        
+       
         BeerOrderDto savedOrder = beerOrderService.placeOrder(customer.getId(), beerOrder);
-        System.out.println(savedOrder);
+        System.out.println("THIS IS THE ORDER WHICH IS BEING PLACED" + savedOrder);
+        System.out.println("ORDER ID WHICH IS BEING PLACED" + savedOrder.getId());
+        savedOrder.getBeerOrderLines().forEach(line -> {
+        	System.out.println("Quantity being ordered"+line.getOrderQuantity());
+        	System.out.println("Upc being ordered"+line.getUpc());
+         });
+//        System.out.println(savedOrder);
 
     }
 

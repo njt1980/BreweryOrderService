@@ -23,6 +23,8 @@ import org.springframework.statemachine.config.builders.StateMachineTransitionCo
 import org.springframework.statemachine.listener.StateMachineListenerAdapter;
 import org.springframework.statemachine.state.State;
 
+import com.nimel.mymicroservices.beerorderservice.actions.AllocateOrderAction;
+import com.nimel.mymicroservices.beerorderservice.actions.AllocationFailureAction;
 import com.nimel.mymicroservices.beerorderservice.actions.ValidateOrderActions;
 import com.nimel.mymicroservices.beerorderservice.config.JmsConfig;
 import com.nimel.mymicroservices.beerorderservice.entity.BeerOrder;
@@ -46,10 +48,13 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<OrderStatu
 	@Autowired
 	private ValidateOrderActions validateOrderActions;
 //	private Action<OrderStatusEnum, OrderEventEnum> validateOrderActions;
-	private Action<OrderStatusEnum, OrderEventEnum> allocateOrderAction;
+	@Autowired
+	private AllocateOrderAction allocateOrderAction;
+//	private Action<OrderStatusEnum, OrderEventEnum> allocateOrderAction;
 	private Action<OrderStatusEnum, OrderEventEnum> deallocateOrderAction;
 	private Action<OrderStatusEnum, OrderEventEnum> validationFailureAction;
-	private Action<OrderStatusEnum, OrderEventEnum> allocationFailureAction;
+	private AllocationFailureAction allocationFailureAction;
+//	private Action<OrderStatusEnum, OrderEventEnum> allocationFailureAction;
 	
 	private BeerOrderRepository beerOrderRepository;
 	private BeerOrderMapper beerOrderMapper;
@@ -84,6 +89,7 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<OrderStatu
 //		.state(OrderStatusEnum.PENDING_VALIDATION,testAction())
 		.state(OrderStatusEnum.PENDING_VALIDATION,validateOrderActions)
 		.state(OrderStatusEnum.PENDING_ALLOCATION,allocateOrderAction)
+		.state(OrderStatusEnum.ALLOCATION_ERROR,allocationFailureAction)
 		.states(EnumSet.allOf(OrderStatusEnum.class))
 		.end(OrderStatusEnum.PICKED_UP)
 		.end(OrderStatusEnum.VALIDATION_EXCEPTION)
@@ -114,7 +120,7 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<OrderStatu
 		.withExternal().source(OrderStatusEnum.PENDING_ALLOCATION).target(OrderStatusEnum.ALLOCATED).event(OrderEventEnum.ALLOCATION_SUCCESS)
 		.and()
 		.withExternal().source(OrderStatusEnum.PENDING_ALLOCATION).target(OrderStatusEnum.ALLOCATION_ERROR).event(OrderEventEnum.ALLOCATION_FAILED)
-		.action(allocationFailureAction)
+//		.action(allocationFailureAction)
 		.and()
 		.withExternal().source(OrderStatusEnum.PENDING_ALLOCATION).target(OrderStatusEnum.PENDING_INVENTORY).event(OrderEventEnum.ALLOCATION_NO_INVENTORY)
 		.and()
