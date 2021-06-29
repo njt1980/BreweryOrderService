@@ -29,6 +29,7 @@ public class BeerOrderStateChangeInterceptor extends StateMachineInterceptorAdap
 	
 	private BeerOrderRepository beerOrderRepository;
 	
+	@Transactional
 	@Override
 	public void preStateChange(State<OrderStatusEnum, OrderEventEnum> state, Message<OrderEventEnum> message,
 			Transition<OrderStatusEnum, OrderEventEnum> transition,

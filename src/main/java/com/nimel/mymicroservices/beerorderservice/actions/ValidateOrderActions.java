@@ -20,7 +20,6 @@ import com.nimel.mymicroservices.beerorderservice.respository.BeerOrderRepositor
 import com.nimel.mymicroservices.beerorderservice.services.BeerOrderManagerImpl;
 import com.nimel.mymicroservices.common.dtos.ValidateOrderRequest;
 
-import jdk.internal.org.jline.utils.Log;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +48,7 @@ public class ValidateOrderActions implements Action<OrderStatusEnum, OrderEventE
 			jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_QUEUE,ValidateOrderRequest.builder()
 					.beerOrderDto(beerOrderMapper.toBeerOrderDto(beerOrder))
 					.build());
-		},() -> Log.error("Order not found: " + beerOrderId));
+		},() -> log.error("Order not found: " + beerOrderId));
 		
 		System.out.println("Validation request sent to queue for order id" + beerOrderId);
 	}
