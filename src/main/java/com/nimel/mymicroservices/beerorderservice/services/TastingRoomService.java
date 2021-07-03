@@ -66,8 +66,8 @@ public class TastingRoomService {
         List<BeerOrderLineDto> beerOrderLineSet = new ArrayList<>();
         beerOrderLineSet.add(beerOrderLine);
         
-        System.out.println(beerOrderLine);
-        System.out.println(beerOrderLineSet);
+//        System.out.println(beerOrderLine);
+//        System.out.println(beerOrderLineSet);
         
 
         BeerOrderDto beerOrder = BeerOrderDto.builder()

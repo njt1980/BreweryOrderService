@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Profile;
 
 import com.nimel.mymicroservices.beerorderservice.entity.BeerOrder;
 import com.nimel.mymicroservices.beerorderservice.entity.BeerOrderLine;
@@ -16,6 +17,7 @@ import com.nimel.mymicroservices.beerorderservice.respository.CustomerRepository
 import com.nimel.mymicroservices.beerorderservice.services.BeerOrderManager;
 import com.nimel.mymicroservices.beerorderservice.services.BeerOrderService;
 
+@Profile("localmysql")
 @SpringBootApplication
 public class BeerorderserviceApplication implements CommandLineRunner {
 	
